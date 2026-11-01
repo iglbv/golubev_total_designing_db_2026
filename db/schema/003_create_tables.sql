@@ -5,18 +5,18 @@ create table client (
     phone_number varchar(12) not null unique
 );
 
-create table client_address (
-    client_id uuid references client(client_id) on delete cascade,
-    address_id uuid references address(address_id),
-
-    primary key (client_id, address_id)
-);
-
 create table address (
     address_id uuid primary key default exts.uuid_generate_v4(),
     street varchar(100) not null,
     house_number varchar(10) not null,
     apartment_office varchar(10)
+);
+
+create table client_address (
+    client_id uuid references client(client_id) on delete cascade,
+    address_id uuid references address(address_id),
+
+    primary key (client_id, address_id)
 );
 
 create table restaurant (
@@ -62,6 +62,11 @@ create table courier_pay (
     check (coefficient_used >= 0.1 and coefficient_used <= 0.5)
 );
 
+create table product_category (
+    product_category_id uuid primary key default exts.uuid_generate_v4(),
+    product_category_name varchar(100) not null
+);
+
 create table product (
     product_id uuid primary key default exts.uuid_generate_v4(),
     product_name varchar(100) not null,
@@ -75,11 +80,6 @@ create table product (
 
     check (price >= 0),
     check (rating >= 0 and rating <= 5)
-);
-
-create table product_category (
-    product_category_id uuid primary key default exts.uuid_generate_v4(),
-    product_category_name varchar(100) not null
 );
 
 create table "order" (
@@ -118,12 +118,21 @@ create table "order" (
     constraint check_delivery_time_required check (
         status != 'доставлен'
         or delivery_timestamp is not null
-    )
+    ),
+    constraint fk_order_client_address foreign key (client_id, address_id)
+        references client_address(client_id, address_id)
 );
 
 create table payment (
     payment_id uuid primary key default exts.uuid_generate_v4(),
-    order_id uuid not null references "order"(order_id)
+    order_id uuid not null references "order"(order_id),
+    payment_type payment_type not null,
+    amount numeric(12,2) not null,
+    transaction_id uuid not null unique,
+    transaction_timestamp timestamp not null default current_timestamp,
+    status payment_status not null,
+
+    check (amount > 0)
 );
 
 create table review (
@@ -135,7 +144,7 @@ create table review (
     order_id uuid not null references "order"(order_id),
     description text not null,
     photo_url text,
-    rating numeric,
+    rating numeric not null,
 
     constraint check_review_rating check (
         rating >= 1 and rating <= 5
