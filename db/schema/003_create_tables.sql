@@ -79,7 +79,9 @@ create table product (
     description text not null,
 
     check (price >= 0),
-    check (rating >= 0 and rating <= 5)
+    check (rating >= 0 and rating <= 5),
+
+    constraint unique_product_reastaurant unique (product_id, restaurant_id)
 );
 
 create table "order" (
@@ -120,7 +122,8 @@ create table "order" (
         or delivery_timestamp is not null
     ),
     constraint fk_order_client_address foreign key (client_id, address_id)
-        references client_address(client_id, address_id)
+        references client_address(client_id, address_id),
+    constraint unique_order_restaurant unique (order_id, restaurant_id)
 );
 
 create table payment (
