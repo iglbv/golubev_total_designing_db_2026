@@ -86,7 +86,7 @@ create table product (
 
 create table "order" (
     order_id uuid primary key default exts.uuid_generate_v4(),
-    courier_id uuid references courier(courier_id),
+    courier_id uuid not null references courier(courier_id),
     client_id uuid not null references client(client_id),
     address_id uuid not null references address(address_id),
     restaurant_id uuid not null references restaurant(restaurant_id),
@@ -112,10 +112,6 @@ create table "order" (
     constraint check_delivery_timestamp check (
         delivery_timestamp is null
         or delivery_timestamp >= order_timestamp
-    ),
-    constraint check_courier_required check (
-        status not in ('в_доставке', 'доставлен')
-        or courier_id is not null
     ),
     constraint check_delivery_time_required check (
         status != 'доставлен'
