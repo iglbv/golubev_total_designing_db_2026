@@ -1,6 +1,4 @@
-create or replace procedure erase_test_data()
-language plpgsql
-as $$
+create or replace procedure erase_test_data () language plpgsql as $$
 begin
     delete from review;
     delete from payment;

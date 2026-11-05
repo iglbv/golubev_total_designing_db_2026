@@ -1,13 +1,10 @@
-create or replace function get_statistic()
-returns table (
-    restaurant_name varchar(100),
-    best_product_name varchar(100),
-    total_amount numeric,
-    avg_amount numeric,
-    best_user varchar(50)
-)
-language plpgsql
-as $$
+create or replace function get_statistic () returns table (
+  restaurant_name varchar(100),
+  best_product_name varchar(100),
+  total_amount numeric,
+  avg_amount numeric,
+  best_user varchar(50)
+) language plpgsql as $$
 begin
     return query
     with delivered_orders as materialized (

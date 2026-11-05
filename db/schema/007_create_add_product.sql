@@ -1,16 +1,15 @@
-create or replace procedure add_product(
-    p_restaurant_id uuid,
-    p_product_category_id uuid,
-    p_name varchar(100),
-    p_price numeric,
-    p_rating numeric default null,
-    p_status product_status default 'доступно',
-    p_description text default null,
-    p_photo_url text default null
-)
-language plpgsql
-set search_path = golubev_food, public
-as $$
+create or replace procedure add_product (
+  p_restaurant_id uuid,
+  p_product_category_id uuid,
+  p_name varchar(100),
+  p_price numeric,
+  p_rating numeric default null,
+  p_status product_status default 'доступно',
+  p_description text default null,
+  p_photo_url text default null
+) language plpgsql
+set
+  public as $$
 begin
     if not exists (
         select 1

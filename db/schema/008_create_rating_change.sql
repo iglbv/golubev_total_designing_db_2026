@@ -1,7 +1,4 @@
-create or replace function rating_change()
-returns trigger
-language plpgsql
-as $$
+create or replace function rating_change () returns trigger language plpgsql as $$
 begin
     if tg_op in ('UPDATE', 'DELETE') then
 
@@ -64,6 +61,8 @@ end;
 $$;
 
 create trigger trg_rating_change
-after insert or update or delete on review
-for each row
-execute function rating_change();
+after insert
+or
+update
+or delete on review for each row
+execute function rating_change ();

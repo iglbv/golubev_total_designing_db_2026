@@ -1,7 +1,6 @@
-create or replace procedure insert_test_data(value int)
-language plpgsql
-set search_path = golubev_food, public
-as $$
+create or replace procedure insert_test_data (value int) language plpgsql
+set
+  public as $$
 declare
     v_n     int := value;
     v_pool  int;

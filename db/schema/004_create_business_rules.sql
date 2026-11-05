@@ -1,7 +1,4 @@
-create or replace function check_order_product_restaurant()
-returns trigger
-language plpgsql
-as $$
+create or replace function check_order_product_restaurant () returns trigger language plpgsql as $$
 declare
     v_order_restaurant uuid;
     v_product_restaurant uuid;
@@ -30,15 +27,12 @@ end;
 $$;
 
 create constraint trigger trg_check_order_product_restaurant
-after insert or update on order_structure
-deferrable initially deferred
-for each row
-execute function check_order_product_restaurant();
+after insert
+or
+update on order_structure deferrable initially deferred for each row
+execute function check_order_product_restaurant ();
 
-create or replace function prevent_product_restaurant_change()
-returns trigger
-language plpgsql
-as $$
+create or replace function prevent_product_restaurant_change () returns trigger language plpgsql as $$
 begin
     if new.restaurant_id is distinct from old.restaurant_id
        and exists (
@@ -57,15 +51,11 @@ begin
 end;
 $$;
 
-create trigger trg_prevent_product_restaurant_change
-before update of restaurant_id on product
-for each row
-execute function prevent_product_restaurant_change();
+create trigger trg_prevent_product_restaurant_change before
+update of restaurant_id on product for each row
+execute function prevent_product_restaurant_change ();
 
-create or replace function prevent_order_restaurant_change()
-returns trigger
-language plpgsql
-as $$
+create or replace function prevent_order_restaurant_change () returns trigger language plpgsql as $$
 begin
     if new.restaurant_id is distinct from old.restaurant_id
        and exists (
@@ -84,15 +74,11 @@ begin
 end;
 $$;
 
-create trigger trg_prevent_order_restaurant_change
-before update of restaurant_id on "order"
-for each row
-execute function prevent_order_restaurant_change();
+create trigger trg_prevent_order_restaurant_change before
+update of restaurant_id on "order" for each row
+execute function prevent_order_restaurant_change ();
 
-create or replace function prevent_product_price_change()
-returns trigger
-language plpgsql
-as $$
+create or replace function prevent_product_price_change () returns trigger language plpgsql as $$
 begin
     if new.price is distinct from old.price
        and exists (
@@ -109,15 +95,11 @@ begin
 end;
 $$;
 
-create trigger trg_prevent_product_price_change
-before update of price on product
-for each row
-execute function prevent_product_price_change();
+create trigger trg_prevent_product_price_change before
+update of price on product for each row
+execute function prevent_product_price_change ();
 
-create or replace function check_order_has_products()
-returns trigger
-language plpgsql
-as $$
+create or replace function check_order_has_products () returns trigger language plpgsql as $$
 declare
     v_order_id uuid;
 begin
@@ -145,10 +127,7 @@ begin
 end;
 $$;
 
-create or replace function check_affected_orders_have_products()
-returns trigger
-language plpgsql
-as $$
+create or replace function check_affected_orders_have_products () returns trigger language plpgsql as $$
 begin
     if tg_op = 'INSERT' then
 
@@ -194,12 +173,7 @@ begin
 end;
 $$;
 
-create or replace function assert_order_has_products(
-    p_order_id uuid
-)
-returns void
-language plpgsql
-as $$
+create or replace function assert_order_has_products (p_order_id uuid) returns void language plpgsql as $$
 begin
     if exists (
         select 1
@@ -217,10 +191,7 @@ begin
 end;
 $$;
 
-create or replace function check_affected_orders_have_products()
-returns trigger
-language plpgsql
-as $$
+create or replace function check_affected_orders_have_products () returns trigger language plpgsql as $$
 begin
     if tg_op = 'INSERT' then
 
@@ -245,23 +216,17 @@ end;
 $$;
 
 create constraint trigger trg_order_has_products
-after insert on "order"
-deferrable initially deferred
-for each row
-execute function check_affected_orders_have_products();
+after insert on "order" deferrable initially deferred for each row
+execute function check_affected_orders_have_products ();
 
 create constraint trigger trg_order_structure_has_products
-after insert or update or delete on order_structure
-deferrable initially deferred
-for each row
-execute function check_affected_orders_have_products();
+after insert
+or
+update
+or delete on order_structure deferrable initially deferred for each row
+execute function check_affected_orders_have_products ();
 
-create or replace function assert_order_products_amount(
-    p_order_id uuid
-)
-returns void
-language plpgsql
-as $$
+create or replace function assert_order_products_amount (p_order_id uuid) returns void language plpgsql as $$
 declare
     v_order_amount numeric;
     v_products_amount numeric;
@@ -288,10 +253,7 @@ begin
 end;
 $$;
 
-create or replace function check_affected_orders_amount()
-returns trigger
-language plpgsql
-as $$
+create or replace function check_affected_orders_amount () returns trigger language plpgsql as $$
 begin
     if tg_op = 'INSERT' then
 
@@ -316,21 +278,19 @@ end;
 $$;
 
 create constraint trigger trg_check_order_products_amount
-after insert or update on "order"
-deferrable initially deferred
-for each row
-execute function check_affected_orders_amount();
+after insert
+or
+update on "order" deferrable initially deferred for each row
+execute function check_affected_orders_amount ();
 
 create constraint trigger trg_check_products_amount
-after insert or update or delete on order_structure
-deferrable initially deferred
-for each row
-execute function check_affected_orders_amount();
+after insert
+or
+update
+or delete on order_structure deferrable initially deferred for each row
+execute function check_affected_orders_amount ();
 
-create or replace function prevent_order_total_change_after_payment()
-returns trigger
-language plpgsql
-as $$
+create or replace function prevent_order_total_change_after_payment () returns trigger language plpgsql as $$
 begin
     if new.total_amount is distinct from old.total_amount
        and exists (
@@ -347,15 +307,11 @@ begin
 end;
 $$;
 
-create trigger trg_prevent_order_total_change
-before update of total_amount on "order"
-for each row
-execute function prevent_order_total_change_after_payment();
+create trigger trg_prevent_order_total_change before
+update of total_amount on "order" for each row
+execute function prevent_order_total_change_after_payment ();
 
-create or replace function check_payment_amount()
-returns trigger
-language plpgsql
-as $$
+create or replace function check_payment_amount () returns trigger language plpgsql as $$
 declare
     v_total_amount numeric;
 begin
@@ -377,17 +333,12 @@ begin
 end;
 $$;
 
-create trigger trg_check_payment_amount
-before insert or update on payment
-for each row
-execute function check_payment_amount();
+create trigger trg_check_payment_amount before insert
+or
+update on payment for each row
+execute function check_payment_amount ();
 
-create or replace function refresh_order_pay_status(
-    p_order_id uuid
-)
-returns void
-language plpgsql
-as $$
+create or replace function refresh_order_pay_status (p_order_id uuid) returns void language plpgsql as $$
 declare
     v_pay_status order_payment_status;
 begin
@@ -433,10 +384,7 @@ begin
 end;
 $$;
 
-create or replace function update_order_pay_status()
-returns trigger
-language plpgsql
-as $$
+create or replace function update_order_pay_status () returns trigger language plpgsql as $$
 begin
     if tg_op = 'INSERT' then
 
@@ -461,14 +409,13 @@ end;
 $$;
 
 create trigger trg_update_order_pay_status
-after insert or update or delete on payment
-for each row
-execute function update_order_pay_status();
+after insert
+or
+update
+or delete on payment for each row
+execute function update_order_pay_status ();
 
-create or replace function check_review_eligibility()
-returns trigger
-language plpgsql
-as $$
+create or replace function check_review_eligibility () returns trigger language plpgsql as $$
 declare
     v_order_client uuid;
     v_order_restaurant uuid;
@@ -525,15 +472,12 @@ begin
 end;
 $$;
 
-create trigger trg_check_review_eligibility
-before insert or update on review
-for each row
-execute function check_review_eligibility();
+create trigger trg_check_review_eligibility before insert
+or
+update on review for each row
+execute function check_review_eligibility ();
 
-create or replace function prevent_removing_reviewed_product()
-returns trigger
-language plpgsql
-as $$
+create or replace function prevent_removing_reviewed_product () returns trigger language plpgsql as $$
 begin
     if exists (
         select 1
@@ -551,10 +495,7 @@ begin
 end;
 $$;
 
-create or replace function prevent_removing_reviewed_product()
-returns trigger
-language plpgsql
-as $$
+create or replace function prevent_removing_reviewed_product () returns trigger language plpgsql as $$
 begin
     if tg_op = 'DELETE'
        or old.order_id is distinct from new.order_id
@@ -581,7 +522,7 @@ begin
 end;
 $$;
 
-create trigger trg_prevent_removing_reviewed_product
-before delete or update on order_structure
-for each row
-execute function prevent_removing_reviewed_product();
+create trigger trg_prevent_removing_reviewed_product before delete
+or
+update on order_structure for each row
+execute function prevent_removing_reviewed_product ();
